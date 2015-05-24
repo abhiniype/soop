@@ -1,0 +1,8 @@
+write:
+    -strings             														[X]
+    -numbers             														[X]
+    -expresions          														[X]
+    
+variables:
+    -assigning variables         	 											[X]
+    -assigning variables to other variables 									[-]
