@@ -77,6 +77,10 @@ def lex(filecontents):
             tokens.append("PRINT")
             token = ""
             
+        elif token == "ask":
+            tokens.append("INPUT")
+            token = ""
+
         elif re.search('^[0-9]+$', token):
             expr += token
             token = ""
@@ -88,7 +92,7 @@ def lex(filecontents):
             token = ""
             
             
-        elif token == "\"":
+        elif token == "\"" or token == " \"":
             
             if state == 0:
                 state = 1
@@ -124,7 +128,12 @@ def getVar(varName):
             varValue = varValue[5:]
         return varValue
     else:
-        return "WHAT !!!!?!!!?!!!?!!! \n We have never heard of the variable " + varName+ " in Our Lives!"
+        return "\n\nWHAT !!!!?!!!?!!!?!!! \n\t We have never heard of the variable " + varName+ " in Our Lives!"
+        exit()
+
+def getInput(string, varName):
+    i = input(string[1:-1])
+    symbols[varName] = "STRING:" + "\"" + i + "\""
 
 def parse(toks):
     i = 0
@@ -167,6 +176,10 @@ def parse(toks):
             
 
             i+=3
+        elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
+            getInput(toks[i+1][7:], toks[i+2][4:])
+            
+            i += 3
     #print(symbols)
     
 def run():

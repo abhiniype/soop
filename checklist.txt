@@ -5,4 +5,6 @@ write:
     
 variables:
     -assigning variables         	 											[X]
-    -assigning variables to other variables 									[-]
+    -assigning variables to other variables 									[X]
+    -assigning variables to other variables and appending something				[-]
+
