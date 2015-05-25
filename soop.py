@@ -33,7 +33,7 @@ def lex(filecontents):
                 token = " "
                 
                 
-        elif token == "\n" or token == "<EOF>": #Takes care of Newline and the End of File 
+        elif token == "\n" or token == "\t" or token == "<EOF>": #Takes care of Newline and the End of File 
             
             if expr != "" and isexpr == 1:
                 tokens.append("EXPR:" + expr)
@@ -50,12 +50,23 @@ def lex(filecontents):
             token = ""
         
         elif token == "=" and state == 0: 
+
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+
             if var != "":
                 tokens.append("VAR:" + var)
                 var = ""
                 varStarted = 0
-            tokens.append("EQUALS")
+
+            if tokens[-1] == "EQUALS":
+                tokens[-1] = "EQEQ" # '=='
+            else:
+                tokens.append("EQUALS")
+
             token = ""
+
           
         elif token == "!" and state == 0:
             varStarted = 1
@@ -76,7 +87,25 @@ def lex(filecontents):
         elif token == "write":
             tokens.append("PRINT")
             token = ""
-            
+
+        elif token == "done":
+            tokens.append("END")
+            token = ""
+
+        elif token == "suppose":
+            tokens.append("IF")
+            token = ""
+
+        
+
+
+        elif token == ":":
+            if expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
+                expr = ""
+            tokens.append("THEN")
+            token = ""
+
         elif token == "ask":
             tokens.append("INPUT")
             token = ""
@@ -107,7 +136,7 @@ def lex(filecontents):
             string += token
             token = ""
             
-    #print(tokens)
+    print(tokens)
     return tokens
     #return ''
 
@@ -138,8 +167,11 @@ def getInput(string, varName):
 def parse(toks):
     i = 0
     while(i < len(toks)):
+
+        if toks[i] == "END":
+            i+=1
         
-        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
+        elif toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR" or toks[i] + " " + toks[i+1][0:3] == "PRINT VAR":
             if  toks[i+1][0:6] == "STRING":
                 print(toks[i+1][8:-1])
                 i+=2
@@ -184,6 +216,12 @@ def parse(toks):
             getInput(toks[i+1][7:], toks[i+2][4:])
             
             i += 3
+        elif toks[i] + " " + toks[i+1][0:3] + " " + toks[i+2] + " " + toks[i+3][0:3] + " " + toks[i+4]  == "IF NUM EQEQ NUM THEN":
+            if toks[i+1][4:] == toks[i+3][4:]:
+                print("TRUE")
+            else:
+                print("FALSE")
+            i += 5
     #print(symbols)
     
 def run():
