@@ -57,7 +57,7 @@ def lex(filecontents):
             tokens.append("EQUALS")
             token = ""
           
-        elif token == "$" and state == 0:
+        elif token == "!" and state == 0:
             varStarted = 1
             var += token
             token = ""
@@ -156,26 +156,30 @@ def parse(toks):
                 print( eval(toks[i+1][5:]))
                  
                 i+=2
-        elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR":
+        elif toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EQUALS STRING" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS NUM" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:4] == "VAR EQUALS EXPR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:3] == "VAR EQUALS VAR" or toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:5] + " " + toks[i+3][0:6] == "VAR EQUALS INPUT STRING":
             
             
             if  toks[i+2][0:6] == "STRING":
                 assignVar(toks[i], toks[i+2])
-                #i+=2
+                i+=3
             
             elif  toks[i+2][0:3] == "NUM":
                 assignVar(toks[i], toks[i+2])
-                #i+=2
+                i+=3
 
             elif  toks[i+2][0:3] == "VAR":
                 assignVar(toks[i], getVar(toks[i+2]))
-                #i+=2
-            
+                i+=3
+
+            elif  toks[i+2][0:5] + " " + toks[i+3][0:6] == "INPUT STRING":
+                getInput(toks[i+3][7:], toks[i][4:])
+                i+=4
+
             elif  toks[i+2][0:4] == "EXPR":
                 assignVar(toks[i], "NUM:" + str(eval(toks[i+2][5:])))
             
 
-            i+=3
+                i+=3
         elif toks[i] + " " + toks[i+1][0:6] + " " + toks[i+2][0:3] == "INPUT STRING VAR":
             getInput(toks[i+1][7:], toks[i+2][4:])
             
